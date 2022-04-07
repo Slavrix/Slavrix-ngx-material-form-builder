@@ -22,14 +22,13 @@
 					</div>
 					<mat-selection-list [multiple]="false" cdkDropList id="list-select" #listSelect="cdkDropList"
 						[cdkDropListConnectedTo]="connectSections()" [cdkDropListData]="fieldModels">
-						<mat-list-option cdkDrag [cdkDragData]="item" *ngFor="let item of fieldModels"
-							(cdkDragStart)="onDragStart($event)" (cdkDragEnd)="onDragEnd($event)"
-							(cdkDragDrop)="onDragged($event)">
+						<mat-list-option cdkDrag [cdkDragData]="item" *ngFor="let item of fieldModels">
 							<mat-icon mat-list-icon>{{item.icon}}</mat-icon>
 							<h5 mat-line>{{item.label}}</h5>
 							<div class="custom-placeholder" *cdkDragPlaceholder></div>
 						</mat-list-option>
 					</mat-selection-list>
+          <button mat-raised-button (click)="addSection()">Add Another Section</button>
 				</div>
 			<div class="overflow-auto" fxFlex="auto">
 				<div class="form-container" fxLayout="column">
@@ -55,11 +54,16 @@
             <!-- Add setion titles -->
 
             <div fxFlex="auto" fxLayout="column">
-              <mat-form-field fxFlex="auto" appearance="outline">
-                <mat-label>Section Name</mat-label>
-                <input matInput type="text" placeholder="form name..." [(ngModel)]="section.name">
-                <mat-hint>Title for this Section.</mat-hint>
-              </mat-form-field>
+              <div fxFlex="auto">
+                <mat-form-field fxFlex="7 1 auto" appearance="outline">
+                  <mat-label>Section Name</mat-label>
+                  <input matInput type="text" placeholder="form name..." [(ngModel)]="section.name">
+                  <mat-hint>Title for this Section.</mat-hint>
+                </mat-form-field>
+                <div fxFlexAlign="center" fxLayoutAlign="space-around" fxFlex="1 0 30px">
+                  <mat-icon color="warn" (click)="removeSection(j)">delete</mat-icon>
+                </div>
+              </div>
               <mat-form-field fxFlex="auto" appearance="outline">
                 <mat-label>Description</mat-label>
                 <textarea matInput placeholder="form description..." cdkTextareaAutosize
@@ -73,15 +77,18 @@
               (cdkDropListDropped)="onDrop($event)"
               [cdkDropListData]="section.attributes"
               [cdkDropListConnectedTo]="connectSections()">
-              <mat-list-item *ngFor="let item of section.attributes;let i= index;" cdkDrag [cdkDragData]="item"
-                (cdkDragStart)="onDragStart($event)" (cdkDragEnd)="onDragEnd($event)"
-                (cdkDragDrop)="onDragged($event)">
+              <mat-list-item *ngFor="let item of section.attributes;let i= index;" cdkDrag [cdkDragData]="item">
                 <mat-expansion-panel fxLayout="column" class="form-list-card">
                   <mat-expansion-panel-header fxFlex="auto">
                     <div fxFlex="auto">
-                      <mat-icon class="dragger" fxFlexAlign="center" fxFlex="10" cdkDragHandle>
-                        drag_handle</mat-icon>
-                      <div fxFlex="auto" fxLayout="column">
+                      <div fxFlexAlign="center" fxLayoutAlign="space-evenly" fxFlex="1 0 30px">
+                        <mat-icon class="dragger" cdkDragHandle>
+                          drag_handle
+                        </mat-icon>
+                        <mat-icon color="warn" (click)="removeField(j, i)">delete</mat-icon>
+                      </div>
+                      <div fxFlex="7 1 auto" fxLayout="column">
+
                         <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='text'"
                           (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
@@ -89,27 +96,38 @@
                           <input type="text" matInput id="{{item.name}}"
                             placeholder="{{item.placeholder}}">
                         </mat-form-field>
-                        <mat-form-field fxFlex="auto" appearance="outline"
-                          *ngIf="item.type=='email'" (click)="$event.stopPropagation()">
+
+                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='email'"
+                          (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
                           <input type="email" matInput id="{{item.name}}"
-                            placeholder="{{item.placeholder}}">
+                            placeholder="{{item.placeholder}}" email="true">
                         </mat-form-field>
-                        <mat-form-field fxFlex="auto" appearance="outline"
-                          *ngIf="item.type=='phone'" (click)="$event.stopPropagation()">
+
+                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='phone'"
+                          (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
-                          <input type="text" matInput id="{{item.name}}"
-                            placeholder="{{item.placeholder}}">
+                          <ngx-mat-intl-tel-input
+                              [preferredCountries]="['us', 'gb']"
+                              [enablePlaceholder]="true"
+                              [enableSearch]="true"
+                              name="phone"
+                              describedBy="phoneInput"
+                              id="{{item.name}}"
+                              placeholder="{{item.placeholder}}"
+                              autocomplete="off"></ngx-mat-intl-tel-input>
                         </mat-form-field>
-                        <mat-form-field fxFlex="auto" appearance="outline"
-                          *ngIf="item.type=='number'" (click)="$event.stopPropagation()">
+
+                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='number'"
+                         (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
                           <input type="number" matInput id="{{item.name}}" min="{{item.min}}"
                             max="{{item.max}}" placeholder="{{item.placeholder}}">
                         </mat-form-field>
+
                         <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='date'"
                           (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
@@ -117,21 +135,24 @@
                           <input type="date" matInput id="{{item.name}}"
                             placeholder="{{item.placeholder}}">
                         </mat-form-field>
-                        <mat-form-field fxFlex="auto" appearance="outline"
-                          *ngIf="item.type=='datetime-local'" (click)="$event.stopPropagation()">
+
+                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='datetime-local'"
+                          (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
                           <input type="datetime-local" matInput id="{{item.name}}"
                             placeholder="{{item.placeholder}}">
                         </mat-form-field>
-                        <mat-form-field fxFlex="auto" appearance="outline"
-                          *ngIf="item.type=='textarea'" (click)="$event.stopPropagation()">
+
+                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='textarea'"
+                         (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
                           <textarea matInput id="{{item.name}}"
                             placeholder="{{item.placeholder}}">
-                    </textarea>
+                          </textarea>
                         </mat-form-field>
+
                         <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='file'"
                           (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
@@ -140,27 +161,25 @@
                             placeholder="{{item.placeholder}}">
                           <mat-hint>(File can't be uploaded right now)</mat-hint>
                         </mat-form-field>
+
                         <div fxFlex="auto" *ngIf="item.type=='paragraph'">
                           <p class="form-text">{{item.placeholder}}</p>
                         </div>
-                        <mat-form-field fxFlex="auto" appearance="outline"
-                          *ngIf="item.type=='select'" (click)="$event.stopPropagation()">
+
+                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='select'"
+                         (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
                           <mat-select matInput id="{{item.name}}">
                             <mat-option *ngFor="let v of item.values" [value]="v.value">
                               {{v.label}}</mat-option>
                           </mat-select>
-                          <!-- <mat-hint>{{item.description}}</mat-hint> -->
                         </mat-form-field>
+
                         <div class="checkbox" fxFlex="auto" *ngIf="item.type=='checkbox'"
                           (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
-                          <!-- <a *ngFor="let v of item.values">
-                      <input type="checkbox" matInput [value]="v.value" name="{{item.name}}" (click)="toggleValue(v)"> {{v.label}}
-                    </a> -->
-                          <!-- <span class="example-list-section"> -->
                           <ul class="checkbox-list">
                             <li *ngFor="let v of item.values">
                               <mat-checkbox [value]="v.value">
@@ -168,23 +187,29 @@
                               </mat-checkbox>
                             </li>
                           </ul>
-                          <!-- </span> -->
                         </div>
+
                         <div class="radio" fxFlex="auto" *ngIf="item.type=='radio'"
                           (click)="$event.stopPropagation()">
                           <mat-label>{{item.label}}<span *ngIf="item.required"
                               class="text-danger">*</span></mat-label>
-                          <!-- <a *ngFor="let v of item.values">
-                      <input type="radio" matInput [value]="v.value" name="{{item.name}}" > {{v.label}}
-                    </a> -->
-                          <mat-radio-group class="radio-group" [(ngModel)]="item.value"
-                            [ngModelOptions]="{standalone: true}">
+                            <mat-radio-group class="radio-group">
                             <mat-radio-button class="radio-button" *ngFor="let v of item.values"
                               [value]="v.value">
                               {{v.label}}
                             </mat-radio-button>
                           </mat-radio-group>
                         </div>
+
+                        <div *ngIf="item.type=='rating'" 
+                          (click)="$event.stopPropagation()">
+                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                          </mat-label>
+                          <div>
+                            <ngx-material-rating [max]="item.max"></ngx-material-rating>
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </mat-expansion-panel-header>
@@ -231,10 +256,10 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <!-- <p> -->
+
                       <!-- number -->
-                      <div *ngIf="item.type=='number'">
-                        <mat-form-field appearance="outline">
+                      <div *ngIf="item.type=='number' || item.type=='rating'">
+                        <mat-form-field appearance="outline" *ngIf="item.type=='number'">
                           <mat-label>Min</mat-label>
                           <input matInput type="text" [(ngModel)]="item.min" />
                         </mat-form-field>
@@ -243,6 +268,7 @@
                           <input matInput type="text" [(ngModel)]="item.max" />
                         </mat-form-field>
                       </div>
+
                       <div *ngIf="item.type=='paragraph'">
                         <mat-form-field fxFlex="auto" appearance="outline">
                           <mat-label>Paragraph Text</mat-label>
@@ -250,8 +276,7 @@
                             cdkTextareaAutosize [(ngModel)]="item.placeholder"></textarea>
                         </mat-form-field>
                       </div>
-                      <!-- </p> -->
-                      <!-- <p> -->
+
                       <!-- radio || checkbox || select -->
                       <div *ngIf="item.type=='radio'|| item.type=='checkbox' || item.type=='select'">
                         <div>
@@ -285,128 +310,21 @@
                           </div>
                         </div>
                       </div>
-                      <!-- </p> -->
                     </div>
 
                   </div>
-                  <mat-action-row>
-                    <button mat-icon-button color="warn" (click)="removeField(j, i)">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </mat-action-row>
                 </mat-expansion-panel>
-                <!-- </mat-card> -->
                 <div class="custom-placeholder" *cdkDragPlaceholder></div>
               </mat-list-item>
             </mat-list>
           </div>
-          <!-- Add add new setion-->
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div *ngIf="showForm" class="container marginT60  marginB30" style="max-width:500px;">
-		<!-- [style.backgroundColor]="model.theme.bgColor"
-  [style.color]="model.theme.textColor"> -->
-		<div style="padding:30px;">
-			<div>
-				<h2>{{model.name}}</h2>
-			</div>
-			<div>
-				<p>{{model.description}}</p>
-			</div>
-			<!-- <form class="ftheme"> -->
-				<div *ngFor="let section of model.sections">
-					<div *ngFor="let item of section.attributes">
-						<mat-form-field appearance="outline" *ngIf="item.type=='text'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<input type="text" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-								[(ngModel)]="item.value" [required]="item.required"
-								[ngModelOptions]="{standalone: true}" autocomplete="off">
-						</mat-form-field>
-						<mat-form-field appearance="outline" *ngIf="item.type=='email'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<input type="email" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-								[(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
-						</mat-form-field>
-						<mat-form-field appearance="outline" *ngIf="item.type=='phone'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<input type="email" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-								[(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
-						</mat-form-field>
-						<mat-form-field appearance="outline" *ngIf="item.type=='number'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<input type="number" matInput id="{{item.name}}" min="{{item.min}}" max="{{item.max}}"
-								placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
-								[ngModelOptions]="{standalone: true}" autocomplete="off">
-						</mat-form-field>
-						<mat-form-field appearance="outline" *ngIf="item.type=='date'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<input type="date" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-								[(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
-						</mat-form-field>
-						<mat-form-field appearance="outline" *ngIf="item.type=='datetime-local'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<input type="datetime-local" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-								[(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
-						</mat-form-field>
-						<mat-form-field appearance="outline" *ngIf="item.type=='textarea'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<textarea matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-								[(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
-			</textarea>
-						</mat-form-field>
-						<mat-form-field appearance="outline" *ngIf="item.type=='file'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<input type="file" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-								[(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
-							<mat-hint>(File can't be uploaded right now)</mat-hint>
-						</mat-form-field>
-						<div *ngIf="item.type=='paragraph'">
-							<p class="form-text">{{item.placeholder}}</p>
-						</div>
-						<mat-form-field appearance="outline" *ngIf="item.type=='select'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<mat-select matInput id="{{item.name}}" [(ngModel)]="item.value"
-								[ngModelOptions]="{standalone: true}">
-								<mat-option *ngFor="let v of item.values" [value]="v.value">{{v.label}}</mat-option>
-							</mat-select>
-						</mat-form-field>
-						<div class="checkbox" *ngIf="item.type=='checkbox'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<ul class="checkbox-list">
-								<li *ngFor="let v of item.values">
-									<mat-checkbox [value]="v.value" name="{{v.name}}">
-										{{v.label}}
-									</mat-checkbox>
-								</li>
-							</ul>
-						</div>
-						<div class="radio" *ngIf="item.type=='radio'">
-							<mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-							</mat-label>
-							<mat-radio-group class="radio-group" [(ngModel)]="item.value"
-								[ngModelOptions]="{standalone: true}">
-								<mat-radio-button class="radio-button" *ngFor="let v of item.values" [value]="v.value">
-									{{v.label}}
-								</mat-radio-button>
-							</mat-radio-group>
-						</div>
-					</div>
-				</div>
-			<!-- </form> -->
-		</div>
+	<div *ngIf="showForm">
+    <app-render-form [model]="model"></app-render-form>
 	</div>
 
 	<pre *ngIf="showJson">

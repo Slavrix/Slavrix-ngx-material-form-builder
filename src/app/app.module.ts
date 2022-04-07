@@ -20,11 +20,15 @@ import {MatSelectModule} from '@angular/material/select';
 
 import { AppComponent } from './app.component';
 import { EditFormComponent } from './edit-form/edit-form.component';
+import { NgxMatIntlTelInputModule } from 'ngx-mat-intl-tel-input';
+import { NgxMaterialRatingModule  } from 'ngx-material-rating';
+import { RenderFormComponent } from './render-form/render-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    EditFormComponent
+    EditFormComponent,
+    RenderFormComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +49,9 @@ import { EditFormComponent } from './edit-form/edit-form.component';
     MatCheckboxModule,
     MatRadioModule,
     MatExpansionModule,
-    MatSelectModule
+    MatSelectModule,
+    NgxMatIntlTelInputModule,
+    NgxMaterialRatingModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

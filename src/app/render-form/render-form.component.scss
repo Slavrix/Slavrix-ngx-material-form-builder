@@ -1,0 +1,61 @@
+.form-container {
+    padding: 5px;
+}
+
+.form-list-card {
+    width: 100%;
+    margin-top: 5px;
+
+    mat-form-field {
+        margin-right: 8px;
+    }
+}
+
+.margin-10 {
+    margin: 10px;
+}
+
+.margin-5 {
+    margin: 5px;
+}
+
+.section {
+    padding: 4px;
+    margin-bottom: 10px;
+    border: 2px dotted #ddd;
+}
+
+.checkbox-list {
+    list-style-type: none;
+    margin-top: 4px;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+  
+.radio-button {
+    margin: 5px;
+}
+
+mat-card {
+    margin-top: 5px;
+}
+
+.form-text {
+    min-height: 48px;
+    white-space:pre-line;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+}

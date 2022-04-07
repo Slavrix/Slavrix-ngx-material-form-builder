@@ -33,11 +33,9 @@ export class EditFormComponent implements OnInit {
       "type": "text",
       "icon": "text_fields",
       "label": "Text",
-      "description": "Enter your name",
-      "placeholder": "Enter your name",
-      "subtype": "text",
+      "description": "",
+      "placeholder": "",
       "regex" : "",
-      "handle":true,
       "required": false,
       "validation": false
     },
@@ -46,24 +44,18 @@ export class EditFormComponent implements OnInit {
       "icon": "alternate_email",
       "required": true,
       "label": "Email",
-      "description": "Enter your email",
-      "placeholder": "Enter your email",
-      "subtype": "text",
-      "regex" : "^([a-zA-Z0-9_.-]+)@([a-zA-Z0-9_.-]+)\.([a-zA-Z]{2,5})$",
+      "description": "Enter a valid email address",
+      "placeholder": "",
       "errorText": "Please enter a valid email",
-      "handle":true,
       "validation": true
     },
     {
       "type": "phone",
       "icon": "phone",
       "label": "Phone",
-      "description": "Enter your phone",
-      "placeholder": "Enter your phone",
-      "subtype": "text",
-      "regex" : "^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$",
+      "description": "Enter your phone number including country code",
+      "placeholder": "",
       "errorText": "Please enter a valid phone number",
-      "handle":true,
       "required": false,
       "validation": false
     },
@@ -71,11 +63,10 @@ export class EditFormComponent implements OnInit {
       "type": "number",
       "label": "Number",
       "icon": "dialpad",
-      "description": "Age",
-      "placeholder": "Enter your age",
-      "value": "20",
-      "min": 12,
-      "max": 90,
+      "description": "",
+      "placeholder": "",
+      "min": 0,
+      "max": 100,
       "required": false,
       "validation": false
     },
@@ -83,14 +74,14 @@ export class EditFormComponent implements OnInit {
       "type": "date",
       "icon": "calendar_month",
       "label": "Date",
-      "placeholder": "Date",
+      "placeholder": "",
       "required": false
     },
     {
       "type": "datetime-local",
       "icon": "calendar_month",
       "label": "DateTime",
-      "placeholder": "Date Time",
+      "placeholder": "",
       "required": false,
       "validation": false
     },
@@ -115,7 +106,7 @@ export class EditFormComponent implements OnInit {
       "validation": false,
       "label": "Checkbox",
       "icon":"check_box",
-      "description": "Checkbox",
+      "description": "heckbox",
       "inline": true,
       "values": [
         {
@@ -132,7 +123,7 @@ export class EditFormComponent implements OnInit {
       "type": "radio",
       "icon":"radio_button_checked",
       "label": "Radio",
-      "description": "Radio boxes",
+      "description": "",
       "required": false,
       "validation": false,
       "values": [
@@ -150,8 +141,8 @@ export class EditFormComponent implements OnInit {
       "type": "select",
       "icon":"list",
       "label": "Select",
-      "description": "Select",
-      "placeholder": "Select",
+      "description": "",
+      "placeholder": "",
       "required": false,
       "validation": false,
       "values": [
@@ -173,9 +164,16 @@ export class EditFormComponent implements OnInit {
       "type": "file",
       "icon": "file_upload",
       "label": "File Upload",
-      "subtype": "file",
       "required": false,
       "validation": false
+    },
+    {
+      "type": "rating",
+      "icon": "star",
+      "label": "Rating",
+      "required": false,
+      "validation": false,
+      "max": 5
     }
   ];
 
@@ -224,7 +222,7 @@ export class EditFormComponent implements OnInit {
     console.log("dropped", event);
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else if(event.previousContainer == 'list-select') {
+    } else if(event.previousContainer.id == 'list-select') {
       copyArrayItem(
         event.previousContainer.data,
         event.container.data,
