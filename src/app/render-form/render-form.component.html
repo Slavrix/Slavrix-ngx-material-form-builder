@@ -1,5 +1,5 @@
 <div style="padding:30px;">
-<!-- [style.backgroundColor]="model.theme.bgColor"
+  <!-- [style.backgroundColor]="model.theme.bgColor"
   [style.color]="model.theme.textColor"> -->
   <div>
     <h2>{{model.name}}</h2>
@@ -19,46 +19,38 @@
       <mat-form-field appearance="outline" *ngIf="item.type=='text'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <input type="text" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-          [(ngModel)]="item.value" [required]="item.required"
-          [ngModelOptions]="{standalone: true}" autocomplete="off">
+        <input type="text" matInput id="{{item.name}}" placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
+          [required]="item.required" [ngModelOptions]="{standalone: true}" autocomplete="off">
       </mat-form-field>
-      
+
       <mat-form-field appearance="outline" *ngIf="item.type=='email'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <input type="email" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-          [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
+        <input type="email" matInput id="{{item.name}}" placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
+          [ngModelOptions]="{standalone: true}" autocomplete="off">
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="item.type=='phone'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <ngx-mat-intl-tel-input
-          [preferredCountries]="['us', 'gb']"
-          [enablePlaceholder]="true"
-          [enableSearch]="true"
-          name="phone"
-          describedBy="phoneInput"
-          id="{{item.name}}"
-          placeholder="{{item.placeholder}}"
-          [(ngModel)]="item.value"
-          autocomplete="off"></ngx-mat-intl-tel-input>
+        <ngx-mat-intl-tel-input [preferredCountries]="['us', 'gb']" [enablePlaceholder]="true" [enableSearch]="true"
+          name="phone" describedBy="phoneInput" id="{{item.name}}" placeholder="{{item.placeholder}}"
+          [(ngModel)]="item.value" autocomplete="off"></ngx-mat-intl-tel-input>
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="item.type=='number'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
         <input type="number" matInput id="{{item.name}}" min="{{item.min}}" max="{{item.max}}"
-          placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
-          [ngModelOptions]="{standalone: true}" autocomplete="off">
+          placeholder="{{item.placeholder}}" [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}"
+          autocomplete="off">
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="item.type=='date'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <input type="date" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-          [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
+        <input type="date" matInput id="{{item.name}}" placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
+          [ngModelOptions]="{standalone: true}" autocomplete="off">
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="item.type=='datetime-local'">
@@ -71,16 +63,16 @@
       <mat-form-field appearance="outline" *ngIf="item.type=='textarea'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <textarea matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-          [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
+        <textarea matInput id="{{item.name}}" placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
+          [ngModelOptions]="{standalone: true}" autocomplete="off">
         </textarea>
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="item.type=='file'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <input type="file" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-          [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
+        <input type="file" matInput id="{{item.name}}" placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
+          [ngModelOptions]="{standalone: true}" autocomplete="off">
         <mat-hint>(File can't be uploaded right now)</mat-hint>
       </mat-form-field>
 
@@ -91,8 +83,7 @@
       <mat-form-field appearance="outline" *ngIf="item.type=='select'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <mat-select matInput id="{{item.name}}" [(ngModel)]="item.value"
-          [ngModelOptions]="{standalone: true}">
+        <mat-select matInput id="{{item.name}}" [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}">
           <mat-option *ngFor="let v of item.values" [value]="v.value">{{v.label}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -112,8 +103,7 @@
       <div class="radio" *ngIf="item.type=='radio'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <mat-radio-group class="radio-group" [(ngModel)]="item.value"
-          [ngModelOptions]="{standalone: true}">
+        <mat-radio-group class="radio-group" [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}">
           <mat-radio-button class="radio-button" *ngFor="let v of item.values" [value]="v.value">
             {{v.label}}
           </mat-radio-button>
@@ -124,7 +114,7 @@
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
         <div>
-          <ngx-material-rating [(ngModel)]="item.value" [max]="item.max"></ngx-material-rating>
+          <bar-rating [(ngModel)]="item.value" [max]="item.max"></bar-rating>
         </div>
       </div>
 

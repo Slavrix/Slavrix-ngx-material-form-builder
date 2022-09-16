@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "ng test --no-watch --code-coverage true"
   },
   "private": true,
   "dependencies": {
@@ -21,8 +22,9 @@
     "@angular/platform-browser": "~13.3.1",
     "@angular/platform-browser-dynamic": "~13.3.1",
     "@angular/router": "~13.3.1",
+    "lodash-es": "^4.17.21",
+    "ngx-bar-rating": "^3.0.0",
     "ngx-mat-intl-tel-input": "^4.1.0",
-    "ngx-material-rating": "^2.0.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.1",
     "zone.js": "~0.11.5"
@@ -32,6 +34,7 @@
     "@angular/cli": "~13.3.1",
     "@angular/compiler-cli": "~13.3.1",
     "@types/jasmine": "~4.0.2",
+    "@types/lodash-es": "^4.17.6",
     "@types/node": "^17.0.23",
     "jasmine-core": "~4.0.1",
     "karma": "~6.3.17",
