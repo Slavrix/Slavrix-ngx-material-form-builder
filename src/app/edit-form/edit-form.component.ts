@@ -79,9 +79,18 @@ export class EditFormComponent implements OnInit {
       label: 'Date',
       placeholder: '',
       required: false,
+      validation: false,
     },
     {
-      type: 'datetime-local',
+      type: 'time',
+      icon: 'schedule',
+      label: 'Time',
+      placeholder: '',
+      required: false,
+      validation: false,
+    },
+    {
+      type: 'datetime',
       icon: 'calendar_month',
       label: 'DateTime',
       placeholder: '',
@@ -224,36 +233,29 @@ export class EditFormComponent implements OnInit {
 
   onDrop(event: any) {
     console.log('dropped', event);
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else if (event.previousContainer.id == 'list-select') {
-      // copyArrayItem(
-      //   event.previousContainer.data,
-      //   event.container.data,
-      //   event.previousIndex,
-      //   event.currentIndex
-      // );
-      // Clone the item that was dropped.
-      const clone = cloneDeep(
-        event.previousContainer.data[event.previousIndex]
-      );
+    if (event.previousContainer !== event.container) {
+      if (event.previousContainer.id == 'list-select') {
+        const clone = cloneDeep(event.item.data);
 
-      // Add the clone to the new array.
-      event.container.data.splice(event.currentIndex, 0, clone);
+        // Add the clone to the new array.
+        event.container.data.splice(event.currentIndex, 0, clone);
+      } else {
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+      }
     } else {
-      transferArrayItem(
-        event.previousContainer.data,
+      moveItemInArray(
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
     }
     if (event.previousContainer.data) {
-      this.fieldModels = this.fieldModels.filter((f) => !f.temp);
+      this.fieldModels = this.fieldModels.filter((f: any) => !f.temp);
     }
   }
 
@@ -299,8 +301,9 @@ export class EditFormComponent implements OnInit {
   }
 
   exited(event: any) {
-    const currentIdx = event.container.data.findIndex(
-      (f: any) => f.id === event.item.data.id
+    console.log('exited', event);
+    const currentIdx = this.fieldModels.findIndex(
+      (f: any) => f.type === event.item.data.type
     );
     this.fieldModels.splice(currentIdx + 1, 0, {
       ...event.item.data,
@@ -308,6 +311,7 @@ export class EditFormComponent implements OnInit {
     });
   }
   entered(event: any) {
-    this.fieldModels = this.fieldModels.filter((f) => !f.temp);
+    console.log('entered', event);
+    this.fieldModels = this.fieldModels.filter((f: any) => !f.temp);
   }
 }

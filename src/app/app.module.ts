@@ -23,6 +23,14 @@ import { EditFormComponent } from './edit-form/edit-form.component';
 import { NgxMatIntlTelInputModule } from 'ngx-mat-intl-tel-input';
 import { BarRatingModule } from 'ngx-bar-rating';
 import { RenderFormComponent } from './render-form/render-form.component';
+import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
+import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import {
+  DatetimeAdapter,
+  MTX_DATETIME_FORMATS,
+} from '@ng-matero/extensions/core';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 
 @NgModule({
   declarations: [AppComponent, EditFormComponent, RenderFormComponent],
@@ -47,9 +55,41 @@ import { RenderFormComponent } from './render-form/render-form.component';
     MatExpansionModule,
     MatSelectModule,
     NgxMatIntlTelInputModule,
+    MtxDatetimepickerModule,
     BarRatingModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE],
+    },
+    {
+      provide: DatetimeAdapter,
+      useClass: MomentDatetimeAdapter,
+    },
+    {
+      provide: MTX_DATETIME_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: 'YYYY-MM-DD',
+          monthInput: 'MMMM',
+          timeInput: 'HH:mm',
+          datetimeInput: 'YYYY-MM-DD HH:mm',
+        },
+        display: {
+          dateInput: 'YYYY-MM-DD',
+          monthInput: 'MMMM',
+          timeInput: 'HH:mm',
+          datetimeInput: 'YYYY-MM-DD HH:mm',
+          monthYearLabel: 'YYYY MMMM',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'MMMM YYYY',
+          popupHeaderDateLabel: 'MMM DD, ddd',
+        },
+      },
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 <div class="edit-form-wrapper" *ngIf="model" fxFlexFill>
-  <mat-toolbar class="sticky">
+  <mat-toolbar class="sticky" *ngIf="showForm">
     <span>{{title}}</span>
     <span class="toolbar-spacer"></span>
     <button mat-raised-button (click)="showForm=!showForm">{{showForm?'Show Builder':'Show Form'}}</button>
@@ -8,6 +8,10 @@
   <div *ngIf="!showForm" fxFlexFill>
     <div fxLayout="row" class="container">
       <div fxFlex="25" class="sidebar sticky">
+        <span>{{title}}</span>
+        <span class="toolbar-spacer"></span>
+        <button mat-raised-button (click)="showForm=!showForm">{{showForm?'Show Builder':'Show Form'}}</button>
+        <button mat-raised-button (click)="showJson=!showJson">{{showJson?'Hide JSON':'Show JSON'}}</button>
         <!-- <div>
 				  <label>Background Color</label>
 				  <input class="colorpick" type="color" name="bgColor" [(ngModel)]="model.theme.bgColor" >    
@@ -26,12 +30,7 @@
           <mat-list-option cdkDrag [cdkDragData]="item" *ngFor="let item of fieldModels">
             <mat-icon mat-list-icon>{{item.icon}}</mat-icon>
             <h5 mat-line>{{item.label}}</h5>
-            <div *cdkDragPlaceholder>
-              <mat-list-option>
-                <mat-icon mat-list-icon>{{item.icon}}</mat-icon>
-                <h5 mat-line>{{item.label}}</h5>
-              </mat-list-option>
-            </div>
+            <div class="custom-placeholder" *cdkDragPlaceholder></div>
           </mat-list-option>
         </mat-selection-list>
         <button mat-raised-button (click)="addSection()">Add Another Section</button>
@@ -56,244 +55,278 @@
           </div>
           <!-- [style.backgroundColor]="model.theme.bgColor"
 				[style.color]="model.theme.textColor"> -->
-          <div fxLayout="column" class="section" *ngFor="let section of model.sections;let j= index;">
-            <!-- Add setion titles -->
+          <div cdkDropListGroup>
+            <div fxLayout="column" class="section" *ngFor="let section of model.sections;let j= index;">
+              <!-- Add setion titles -->
 
-            <div fxFlex="auto" fxLayout="column">
-              <div fxFlex="auto">
-                <mat-form-field fxFlex="7 1 auto" appearance="outline">
-                  <mat-label>Section Name</mat-label>
-                  <input matInput type="text" placeholder="form name..." [(ngModel)]="section.name">
-                  <mat-hint>Title for this Section.</mat-hint>
-                </mat-form-field>
-                <div fxFlexAlign="center" fxLayoutAlign="space-around" fxFlex="1 0 30px">
-                  <mat-icon color="warn" (click)="removeSection(j)">delete</mat-icon>
+              <div fxFlex="auto" fxLayout="column">
+                <div fxFlex="auto">
+                  <mat-form-field fxFlex="7 1 auto" appearance="outline">
+                    <mat-label>Section Name</mat-label>
+                    <input matInput type="text" placeholder="form name..." [(ngModel)]="section.name">
+                    <mat-hint>Title for this Section.</mat-hint>
+                  </mat-form-field>
+                  <div fxFlexAlign="center" fxLayoutAlign="space-around" fxFlex="1 0 30px">
+                    <mat-icon color="warn" (click)="removeSection(j)">delete</mat-icon>
+                  </div>
                 </div>
+                <mat-form-field fxFlex="auto" appearance="outline">
+                  <mat-label>Description</mat-label>
+                  <textarea matInput placeholder="form description..." cdkTextareaAutosize
+                    [(ngModel)]="section.description"></textarea>
+                  <mat-hint>Short description of the usage of this section.</mat-hint>
+                </mat-form-field>
               </div>
-              <mat-form-field fxFlex="auto" appearance="outline">
-                <mat-label>Description</mat-label>
-                <textarea matInput placeholder="form description..." cdkTextareaAutosize
-                  [(ngModel)]="section.description"></textarea>
-                <mat-hint>Short description of the usage of this section.</mat-hint>
-              </mat-form-field>
-            </div>
 
-            <mat-list fxFlex="auto" class="drop-list" cdkDropList [id]="'list-'+j"
-              [ngClass]="{'empty':section.attributes.length == 0}" (cdkDropListDropped)="onDrop($event)"
-              [cdkDropListData]="section.attributes" [cdkDropListConnectedTo]="connectSections()">
-              <mat-list-item *ngFor="let item of section.attributes;let i= index;" cdkDrag [cdkDragData]="item">
-                <mat-expansion-panel fxLayout="column" class="form-list-card">
-                  <mat-expansion-panel-header fxFlex="auto">
-                    <div fxFlex="auto">
-                      <div fxFlexAlign="center" fxLayoutAlign="space-evenly" fxFlex="1 0 30px">
-                        <mat-icon class="dragger" cdkDragHandle>
-                          drag_handle
-                        </mat-icon>
-                        <mat-icon color="warn" (click)="removeField(j, i)">delete</mat-icon>
-                      </div>
-                      <div fxFlex="7 1 auto" fxLayout="column">
+              <mat-list fxFlex="auto" class="drop-list" cdkDropList [id]="'list-'+j"
+                [ngClass]="{'empty':section.attributes.length == 0}" (cdkDropListDropped)="onDrop($event)"
+                [cdkDropListData]="section.attributes">
+                <mat-list-item *ngFor="let item of section.attributes;let i= index;" cdkDrag [cdkDragData]="item">
+                  <mat-expansion-panel fxLayout="column" class="form-list-card">
+                    <mat-expansion-panel-header fxFlex="auto">
+                      <div fxFlex="auto">
+                        <div fxFlexAlign="center" fxLayoutAlign="space-evenly" fxFlex="1 0 30px">
+                          <mat-icon class="dragger" cdkDragHandle>
+                            drag_handle
+                          </mat-icon>
+                          <mat-icon color="warn" (click)="removeField(j, i)">delete</mat-icon>
+                        </div>
+                        <div fxFlex="7 1 auto" fxLayout="column">
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='text'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <input type="text" matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
-                        </mat-form-field>
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='text'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <input type="text" matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
+                          </mat-form-field>
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='email'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <input type="email" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-                            email="true">
-                        </mat-form-field>
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='email'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <input type="email" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
+                              email="true">
+                          </mat-form-field>
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='phone'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <ngx-mat-intl-tel-input [preferredCountries]="['us', 'gb']" [enablePlaceholder]="true"
-                            [enableSearch]="true" name="phone" describedBy="phoneInput" id="{{item.name}}"
-                            placeholder="{{item.placeholder}}" autocomplete="off"></ngx-mat-intl-tel-input>
-                        </mat-form-field>
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='phone'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <ngx-mat-intl-tel-input [preferredCountries]="['us', 'gb']" [enablePlaceholder]="true"
+                              [enableSearch]="true" name="phone" describedBy="phoneInput" id="{{item.name}}"
+                              placeholder="{{item.placeholder}}" autocomplete="off"></ngx-mat-intl-tel-input>
+                          </mat-form-field>
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='number'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <input type="number" matInput id="{{item.name}}" min="{{item.min}}" max="{{item.max}}"
-                            placeholder="{{item.placeholder}}">
-                        </mat-form-field>
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='number'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <input type="number" matInput id="{{item.name}}" min="{{item.min}}" max="{{item.max}}"
+                              placeholder="{{item.placeholder}}">
+                          </mat-form-field>
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='date'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <input type="date" matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
-                        </mat-form-field>
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='date'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <input [mtxDatetimepicker]="date" id="{{item.name}}" placeholder="{{item.placeholder}}"
+                              name="{{item.name}}" matInput [min]="item.min" [min]="item.max" (click)="date.open()" />
+                            <mtx-datetimepicker-toggle [for]="date" matSuffix></mtx-datetimepicker-toggle>
+                            <mtx-datetimepicker #date type="date" mode="portrait">
+                            </mtx-datetimepicker>
+                          </mat-form-field>
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='datetime-local'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <input type="datetime-local" matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
-                        </mat-form-field>
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='datetime'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <input [mtxDatetimepicker]="datetime" id="{{item.name}}" placeholder="{{item.placeholder}}"
+                              name="{{item.name}}" matInput [min]="item.min" [min]="item.max"
+                              (click)="datetime.open()" />
+                            <mtx-datetimepicker-toggle [for]="datetime" matSuffix></mtx-datetimepicker-toggle>
+                            <mtx-datetimepicker #datetime type="datetime" mode="portrait">
+                            </mtx-datetimepicker>
+                          </mat-form-field>
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='textarea'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <textarea matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='time'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <input [mtxDatetimepicker]="time" id="{{item.name}}" placeholder="{{item.placeholder}}"
+                              name="{{item.name}}" matInput [min]="item.min" [min]="item.max" (click)="time.open()" />
+                            <mtx-datetimepicker-toggle [for]="time" matSuffix></mtx-datetimepicker-toggle>
+                            <mtx-datetimepicker #time type="time" mode="portrait">
+                            </mtx-datetimepicker>
+                          </mat-form-field>
+
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='textarea'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <textarea matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
                           </textarea>
-                        </mat-form-field>
+                          </mat-form-field>
 
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='file'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <input type="file" matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
-                          <mat-hint>(File can't be uploaded right now)</mat-hint>
-                        </mat-form-field>
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='file'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <input type="file" matInput id="{{item.name}}" placeholder="{{item.placeholder}}">
+                            <mat-hint>(File can't be uploaded right now)</mat-hint>
+                          </mat-form-field>
 
-                        <div fxFlex="auto" *ngIf="item.type=='paragraph'">
-                          <p class="form-text">{{item.placeholder}}</p>
-                        </div>
-
-                        <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='select'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <mat-select matInput id="{{item.name}}">
-                            <mat-option *ngFor="let v of item.values" [value]="v.value">
-                              {{v.label}}</mat-option>
-                          </mat-select>
-                        </mat-form-field>
-
-                        <div class="checkbox" fxFlex="auto" *ngIf="item.type=='checkbox'"
-                          (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <ul class="checkbox-list">
-                            <li *ngFor="let v of item.values">
-                              <mat-checkbox [value]="v.value">
-                                {{v.label}}
-                              </mat-checkbox>
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div class="radio" fxFlex="auto" *ngIf="item.type=='radio'" (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span></mat-label>
-                          <mat-radio-group class="radio-group">
-                            <mat-radio-button class="radio-button" *ngFor="let v of item.values" [value]="v.value">
-                              {{v.label}}
-                            </mat-radio-button>
-                          </mat-radio-group>
-                        </div>
-
-                        <div *ngIf="item.type=='rating'" (click)="$event.stopPropagation()">
-                          <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
-                          </mat-label>
-                          <div>
-                            <bar-rating [max]="item.max"></bar-rating>
+                          <div fxFlex="auto" *ngIf="item.type=='paragraph'">
+                            <p class="form-text">{{item.placeholder}}</p>
                           </div>
-                        </div>
 
+                          <mat-form-field fxFlex="auto" appearance="outline" *ngIf="item.type=='select'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <mat-select matInput id="{{item.name}}">
+                              <mat-option *ngFor="let v of item.values" [value]="v.value">
+                                {{v.label}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+
+                          <div class="checkbox" fxFlex="auto" *ngIf="item.type=='checkbox'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <ul class="checkbox-list">
+                              <li *ngFor="let v of item.values">
+                                <mat-checkbox [value]="v.value">
+                                  {{v.label}}
+                                </mat-checkbox>
+                              </li>
+                            </ul>
+                          </div>
+
+                          <div class="radio" fxFlex="auto" *ngIf="item.type=='radio'"
+                            (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <mat-radio-group class="radio-group">
+                              <mat-radio-button class="radio-button" *ngFor="let v of item.values" [value]="v.value">
+                                {{v.label}}
+                              </mat-radio-button>
+                            </mat-radio-group>
+                          </div>
+
+                          <div *ngIf="item.type=='rating'" (click)="$event.stopPropagation()">
+                            <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+                            </mat-label>
+                            <div>
+                              <bar-rating [max]="item.max"></bar-rating>
+                            </div>
+                          </div>
+
+                        </div>
                       </div>
-                    </div>
-                  </mat-expansion-panel-header>
+                    </mat-expansion-panel-header>
 
-                  <div fxFles="auto" fxLayout="column">
+                    <div fxFles="auto" fxLayout="column">
 
-                    <div class="toggle-Wrapper">
-                      <section>
-                        <mat-slide-toggle class="margin-10" [(ngModel)]="item.required" [color]="'red'">
-                          Required
-                        </mat-slide-toggle>
-                      </section>
-                      <div fxLayout="column">
-                        <div fxFlex="50">
-                          <mat-form-field fxFlex="auto" appearance="outline">
-                            <mat-label>Label</mat-label>
-                            <input matInput type="text" [(ngModel)]="item.label" />
-                          </mat-form-field>
-                          <mat-form-field fxFlex="auto" appearance="outline">
-                            <mat-label>Placeholder</mat-label>
-                            <input matInput type="text" [(ngModel)]="item.placeholder" />
-                          </mat-form-field>
-                          <mat-form-field fxFlex="auto" appearance="outline">
-                            <mat-label>Name</mat-label>
-                            <input matInput type="text" [(ngModel)]="item.name" />
-                          </mat-form-field>
-                        </div>
+                      <div class="toggle-Wrapper">
                         <section>
-                          <mat-slide-toggle class="margin-10" [(ngModel)]="item.validation" [color]="'red'">
-                            Validation
+                          <mat-slide-toggle class="margin-10" [(ngModel)]="item.required" [color]="'red'">
+                            Required
                           </mat-slide-toggle>
                         </section>
-                        <div fxFlex="50" *ngIf="item.validation">
+                        <div fxLayout="column">
+                          <div fxFlex="50">
+                            <mat-form-field fxFlex="auto" appearance="outline">
+                              <mat-label>Label</mat-label>
+                              <input matInput type="text" [(ngModel)]="item.label" />
+                            </mat-form-field>
+                            <mat-form-field fxFlex="auto" appearance="outline">
+                              <mat-label>Placeholder</mat-label>
+                              <input matInput type="text" [(ngModel)]="item.placeholder" />
+                            </mat-form-field>
+                            <mat-form-field fxFlex="auto" appearance="outline">
+                              <mat-label>Name</mat-label>
+                              <input matInput type="text" [(ngModel)]="item.name" />
+                            </mat-form-field>
+                          </div>
+                          <section>
+                            <mat-slide-toggle class="margin-10" [(ngModel)]="item.validation" [color]="'red'">
+                              Validation
+                            </mat-slide-toggle>
+                          </section>
+                          <div fxFlex="50" *ngIf="item.validation">
+                            <mat-form-field fxFlex="auto" appearance="outline">
+                              <mat-label>Validation Regex</mat-label>
+                              <input matInput type="text" [(ngModel)]="item.regex" />
+                              <mat-hint>Regular Expresion to validate entered data.</mat-hint>
+                            </mat-form-field>
+                            <mat-form-field fxFlex="auto" appearance="outline">
+                              <mat-label>Validation Error text</mat-label>
+                              <input matInput type="text" [(ngModel)]="item.errorText" />
+                            </mat-form-field>
+                          </div>
+                        </div>
+
+                        <!-- number -->
+                        <div *ngIf="item.type=='number' || item.type=='rating'">
+                          <mat-form-field appearance="outline" *ngIf="item.type=='number'">
+                            <mat-label>Min</mat-label>
+                            <input matInput type="text" [(ngModel)]="item.min" />
+                          </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <mat-label>Max</mat-label>
+                            <input matInput type="text" [(ngModel)]="item.max" />
+                          </mat-form-field>
+                        </div>
+
+                        <div *ngIf="item.type=='paragraph'">
                           <mat-form-field fxFlex="auto" appearance="outline">
-                            <mat-label>Validation Regex</mat-label>
-                            <input matInput type="text" [(ngModel)]="item.regex" />
-                            <mat-hint>Regular Expresion to validate entered data.</mat-hint>
+                            <mat-label>Paragraph Text</mat-label>
+                            <textarea matInput placeholder="Text to form the Paragraph" cdkTextareaAutosize
+                              [(ngModel)]="item.placeholder"></textarea>
                           </mat-form-field>
-                          <mat-form-field fxFlex="auto" appearance="outline">
-                            <mat-label>Validation Error text</mat-label>
-                            <input matInput type="text" [(ngModel)]="item.errorText" />
-                          </mat-form-field>
+                        </div>
+
+                        <!-- radio || checkbox || select -->
+                        <div *ngIf="item.type=='radio'|| item.type=='checkbox' || item.type=='select'">
+                          <div>
+                            <div>
+                              <label>Label</label>
+                            </div>
+                            <div>
+                              <label>Value</label>
+                            </div>
+                          </div>
+                          <div *ngFor="let i of item.values; let valueIndex=index;">
+                            <mat-form-field>
+                              <input matInput type="text" [(ngModel)]="i.label" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput type="text" [(ngModel)]="i.value" />
+                            </mat-form-field>
+                            <div>
+                              <label (click)="item.values.splice(valueIndex,1)">remove</label>
+                            </div>
+                          </div>
+                          <div>
+                            <mat-form-field>
+                              <input matInput type="text" [(ngModel)]="value.label" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput type="text" [(ngModel)]="value.value" />
+                            </mat-form-field>
+                            <div>
+                              <label (click)="addValue(item.values)">Add</label>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <!-- number -->
-                      <div *ngIf="item.type=='number' || item.type=='rating'">
-                        <mat-form-field appearance="outline" *ngIf="item.type=='number'">
-                          <mat-label>Min</mat-label>
-                          <input matInput type="text" [(ngModel)]="item.min" />
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                          <mat-label>Max</mat-label>
-                          <input matInput type="text" [(ngModel)]="item.max" />
-                        </mat-form-field>
-                      </div>
-
-                      <div *ngIf="item.type=='paragraph'">
-                        <mat-form-field fxFlex="auto" appearance="outline">
-                          <mat-label>Paragraph Text</mat-label>
-                          <textarea matInput placeholder="Text to form the Paragraph" cdkTextareaAutosize
-                            [(ngModel)]="item.placeholder"></textarea>
-                        </mat-form-field>
-                      </div>
-
-                      <!-- radio || checkbox || select -->
-                      <div *ngIf="item.type=='radio'|| item.type=='checkbox' || item.type=='select'">
-                        <div>
-                          <div>
-                            <label>Label</label>
-                          </div>
-                          <div>
-                            <label>Value</label>
-                          </div>
-                        </div>
-                        <div *ngFor="let i of item.values; let valueIndex=index;">
-                          <mat-form-field>
-                            <input matInput type="text" [(ngModel)]="i.label" />
-                          </mat-form-field>
-                          <mat-form-field>
-                            <input matInput type="text" [(ngModel)]="i.value" />
-                          </mat-form-field>
-                          <div>
-                            <label (click)="item.values.splice(valueIndex,1)">remove</label>
-                          </div>
-                        </div>
-                        <div>
-                          <mat-form-field>
-                            <input matInput type="text" [(ngModel)]="value.label" />
-                          </mat-form-field>
-                          <mat-form-field>
-                            <input matInput type="text" [(ngModel)]="value.value" />
-                          </mat-form-field>
-                          <div>
-                            <label (click)="addValue(item.values)">Add</label>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-
-                  </div>
-                </mat-expansion-panel>
-                <div class="custom-placeholder" *cdkDragPlaceholder></div>
-              </mat-list-item>
-            </mat-list>
+                  </mat-expansion-panel>
+                  <div class="custom-placeholder" *cdkDragPlaceholder></div>
+                </mat-list-item>
+              </mat-list>
+            </div>
           </div>
         </div>
       </div>

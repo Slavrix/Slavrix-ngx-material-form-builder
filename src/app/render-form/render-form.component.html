@@ -49,15 +49,31 @@
       <mat-form-field appearance="outline" *ngIf="item.type=='date'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <input type="date" matInput id="{{item.name}}" placeholder="{{item.placeholder}}" [(ngModel)]="item.value"
-          [ngModelOptions]="{standalone: true}" autocomplete="off">
+        <input [mtxDatetimepicker]="date" id="{{item.name}}" placeholder="{{item.placeholder}}" name="{{item.name}}"
+          matInput [min]="item.min" [min]="item.max" (click)="date.open()" />
+        <mtx-datetimepicker-toggle [for]="date" matSuffix></mtx-datetimepicker-toggle>
+        <mtx-datetimepicker #date type="time" mode="portrait">
+        </mtx-datetimepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" *ngIf="item.type=='datetime-local'">
+      <mat-form-field appearance="outline" *ngIf="item.type=='time'">
         <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
         </mat-label>
-        <input type="datetime-local" matInput id="{{item.name}}" placeholder="{{item.placeholder}}"
-          [(ngModel)]="item.value" [ngModelOptions]="{standalone: true}" autocomplete="off">
+        <input [mtxDatetimepicker]="time" id="{{item.name}}" placeholder="{{item.placeholder}}" name="{{item.name}}"
+          matInput [min]="item.min" [min]="item.max" (click)="time.open()" />
+        <mtx-datetimepicker-toggle [for]="time" matSuffix></mtx-datetimepicker-toggle>
+        <mtx-datetimepicker #time type="time" mode="portrait">
+        </mtx-datetimepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="item.type=='datetime'">
+        <mat-label>{{item.label}}<span *ngIf="item.required" class="text-danger">*</span>
+        </mat-label>
+        <input [mtxDatetimepicker]="datetime" id="{{item.name}}" placeholder="{{item.placeholder}}" name="{{item.name}}"
+          matInput [min]="item.min" [min]="item.max" (click)="datetime.open()" />
+        <mtx-datetimepicker-toggle [for]="datetime" matSuffix></mtx-datetimepicker-toggle>
+        <mtx-datetimepicker #datetime type="datetime" mode="portrait">
+        </mtx-datetimepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="item.type=='textarea'">
